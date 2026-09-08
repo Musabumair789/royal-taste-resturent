@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royal Taste Restaurant</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#fffaf0;color:#292929}
+header{background:#222;color:#d9b45b;padding:18px;text-align:center}
+header h1{font-size:27px}
+.hero{background:#333;color:white;text-align:center;padding:55px 20px}
+.hero h2{font-size:32px;margin-bottom:12px}
+.hero p{margin-bottom:22px}
+.btn{background:#d9b45b;color:#222;border:0;padding:12px 22px;border-radius:8px;font-weight:bold;cursor:pointer}
+section{padding:30px 18px;max-width:900px;margin:auto}
+h2{margin-bottom:18px;text-align:center}
+.features,.menu,.tables{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+.card{background:white;padding:18px;border-radius:12px;box-shadow:0 2px 10px #ddd;text-align:center}
+.menu .card{text-align:left}
+.special{border:2px solid #d9b45b}
+.badge{display:inline-block;background:#d9b45b;padding:4px 7px;border-radius:5px;font-size:12px;margin-top:8px}
+.table{padding:14px;border-radius:8px;text-align:center;color:white;font-weight:bold}
+.available{background:#2e9d57}
+.occupied{background:#c74646}
+form{background:white;padding:22px;border-radius:12px;box-shadow:0 2px 10px #ddd}
+input,select{width:100%;padding:12px;margin:8px 0 14px;border:1px solid #ccc;border-radius:7px}
+#result{margin-top:18px;padding:15px;border-radius:8px;display:none}
+footer{background:#222;color:white;text-align:center;padding:20px;margin-top:25px}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Royal Taste Restaurant</h1>
+</header>
+
+<div class="hero">
+<h2>Welcome to Royal Taste</h2>
+<p>Delicious food, elegant dining and easy table booking.</p>
+<button class="btn" onclick="document.getElementById('booking').scrollIntoView()">Book a Table</button>
+</div>
+
+<section>
+<h2>Why Choose Us?</h2>
+<div class="features">
+<div class="card">🍽️<br><b>Delicious & Fresh Food</b></div>
+<div class="card">📅<br><b>Easy Table Booking</b></div>
+<div class="card">⚡<br><b>Fast Service</b></div>
+<div class="card">⭐<br><b>Special Dishes</b></div>
+</div>
+</section>
+
+<section>
+<h2>Table Availability</h2>
+<div class="tables" id="tables"></div>
+</section>
+
+<section>
+<h2>Our Menu</h2>
+<div class="menu">
+<div class="card special"><b>Special Royal Platter</b><br>35 minutes<br><span class="badge">SPECIAL</span></div>
+<div class="card"><b>Chicken Biryani</b><br>20 minutes</div>
+<div class="card"><b>Chicken Karahi</b><br>30 minutes</div>
+<div class="card"><b>Chicken Burger</b><br>15 minutes</div>
+<div class="card"><b>Pizza</b><br>25 minutes</div>
+<div class="card"><b>Beef Steak</b><br>35 minutes</div>
+<div class="card"><b>Chicken Pasta</b><br>20 minutes</div>
+<div class="card"><b>French Fries</b><br>10 minutes</div>
+</div>
+</section>
+
+<section id="booking">
+<h2>Book Your Table</h2>
+
+<form onsubmit="bookTable(event)">
+<label>Customer Name</label>
+<input id="name" required>
+
+<label>Number of Guests</label>
+<input id="guests" type="number" min="1" required>
+
+<label>Available Time (minutes)</label>
+<input id="time" type="number" min="1" required>
+
+<label>Select Dish</label>
+<select id="dish">
+<option value="Special Royal Platter|35">Special Royal Platter</option>
+<option value="Chicken Biryani|20">Chicken Biryani</option>
+<option value="Chicken Karahi|30">Chicken Karahi</option>
+<option value="Chicken Burger|15">Chicken Burger</option>
+<option value="Pizza|25">Pizza</option>
+<option value="Beef Steak|35">Beef Steak</option>
+<option value="Chicken Pasta|20">Chicken Pasta</option>
+<option value="French Fries|10">French Fries</option>
+</select>
+
+<button class="btn" type="submit">Book Table</button>
+</form>
+
+<div id="result"></div>
+</section>
+
+<footer>
+<p>© 2026 Royal Taste Restaurant</p>
+<p>Quality Food • Easy Booking • Great Experience</p>
+</footer>
+
+<script>
+let availableTables=40;
+let specialCount=10;
+
+let tables=document.getElementById("tables");
+
+for(let i=1;i<=50;i++){
+let div=document.createElement("div");
+div.className="table "+(i<=40?"available":"occupied");
+div.textContent="Table "+i;
+tables.appendChild(div);
+}
+
+function bookTable(e){
+e.preventDefault();
+
+let name=document.getElementById("name").value;
+let guests=document.getElementById("guests").value;
+let time=Number(document.getElementById("time").value);
+
+let selected=document.getElementById("dish").value.split("|");
+let dish=selected[0];
+let cooking=Number(selected[1]);
+
+let result=document.getElementById("result");
+
+if(dish==="Special Royal Platter" && specialCount<=0){
+result.style.display="block";
+result.innerHTML="❌ Special Royal Platter is Sold Out.";
+return;
+}
+
+if(cooking>time){
+result.style.display="block";
+result.innerHTML="❌ Not enough available time.<br>Please select another dish or increase your available time.";
+return;
+}
+
+if(availableTables<=0){
+result.style.display="block";
+result.innerHTML="❌ Sorry, all tables are occupied.";
+return;
+}
+
+let tableNumber=41-availableTables;
+availableTables--;
+
+let table=document.querySelectorAll(".table")[tableNumber-1];
+if(table){
+table.classList.remove("available");
+table.classList.add("occupied");
+}
+
+if(dish==="Special Royal Platter"){
+specialCount--;
+}
+
+result.style.display="block";
+result.innerHTML=
+"<h3>✅ Booking Confirmed!</h3>"+
+"<br><b>Customer:</b> "+name+
+"<br><b>Guests:</b> "+guests+
+"<br><b>Table:</b> "+tableNumber+
+"<br><b>Dish:</b> "+dish+
+"<br><b>Cooking Time:</b> "+cooking+" minutes"+
+"<br><b>Available Time:</b> "+time+" minutes"+
+"<br><b>Status:</b> Confirmed";
+}
+</script>
+
+</body>
+</html>
